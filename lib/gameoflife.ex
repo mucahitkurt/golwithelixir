@@ -11,7 +11,7 @@ defmodule Gameoflife do
   """
   def advance(aliveCells) do
     aliveCells |>
-    Enum.map(&(getCellWithNeigbours(&1))) |>
+    Enum.map(&(getCellWithNeighbours(&1))) |>
     List.flatten |>
     Enum.map(&(nextGeneration(&1, aliveCells))) |>
     List.flatten |>
@@ -27,12 +27,12 @@ defmodule Gameoflife do
       end
   end
 
-  defp getCellWithNeigbours(point) do
-    for x <- [-1, 0, 1], y <- [-1, 0, 1], do: %Point{x: point.x + x, y: point.y + y}
+  defp getCellWithNeighbours(point) do
+    for x <- -1..1, y <- -1..1, do: %Point{x: point.x + x, y: point.y + y}
   end
 
   defp aliveCount(point, aliveCells) do
-    getCellWithNeigbours(point) |> Enum.filter(&(Enum.member?(aliveCells, &1))) |> Enum.count()
+    getCellWithNeighbours(point) |> Enum.filter(&(Enum.member?(aliveCells, &1))) |> Enum.count()
   end
 
 end
