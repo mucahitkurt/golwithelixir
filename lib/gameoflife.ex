@@ -10,27 +10,29 @@ defmodule Gameoflife do
     - decide next generation alive or dead for each cell
   """
   def advance(aliveCells) do
-      nextGeneration = []
-        Enum.map(aliveCells,
-          fn ac -> 
-            cellWithNeigbours = getCellWithNeigbours(ac, [-1, 0, 1], [])
-            Enum.map(cellWithNeigbours,
-              fn neigbour ->
-                aliveCount = aliveCount(neigbour, aliveCells)
-                case aliveCount do
-                   3 ->
-                      nextGeneration = [neigbour | nextGeneration]                        
-                   4 ->
-                      if Enum.member?(aliveCells, neigbour) do
-                        nextGeneration = [neigbour | nextGeneration]
-                      else
-                        nextGeneration
-                      end
-                    _ ->
-                      nextGeneration
-                end
-              end)    
-          end) |> List.flatten |> Enum.uniq
+    aliveCells |>
+    Enum.map(&(getCellWithNeigbours(&1, [-1, 0, 1], []))) |>
+    List.flatten |>
+    Enum.map(&(nextGeneration(&1, aliveCells))) |>
+    List.flatten |>
+    Enum.uniq
+  end
+
+  defp nextGeneration(point, aliveCells) do
+    nextGeneration = []
+    aliveCount = aliveCount(point, aliveCells)
+    case aliveCount do
+       3 ->
+          nextGeneration = [point | nextGeneration]                        
+       4 ->
+          if Enum.member?(aliveCells, point) do
+            nextGeneration = [point | nextGeneration]
+          else
+            nextGeneration
+          end
+        _ ->
+          nextGeneration
+    end
   end
 
   defp getCellWithNeigbours(point, y, cellWithNeigbours) do
@@ -43,11 +45,12 @@ defmodule Gameoflife do
     getCellWithNeigbours(point, x, ty, [%Point{x: point.x + x, y: point.y + hy} | cellWithNeigbours])
   end
 
-  defp getCellWithNeigbours(point, x, y, cellWithNeigbours) when length(y) === 0, do: cellWithNeigbours
+  defp getCellWithNeigbours(point, x, y, cellWithNeigbours) when length(y) === 0 do
+    cellWithNeigbours
+  end
 
   defp aliveCount(point, aliveCells) do
-    neigbours = getCellWithNeigbours(point, [-1,0,1], [])
-    neigbours |> Enum.filter(&(Enum.member?(aliveCells, &1))) |> Enum.count()
+    getCellWithNeigbours(point, [-1,0,1], []) |> Enum.filter(&(Enum.member?(aliveCells, &1))) |> Enum.count()
   end
 
 end
