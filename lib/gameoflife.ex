@@ -19,20 +19,12 @@ defmodule Gameoflife do
   end
 
   defp nextGeneration(point, aliveCells) do
-    nextGeneration = []
-    aliveCount = aliveCount(point, aliveCells)
-    case aliveCount do
-       3 ->
-          nextGeneration = [point | nextGeneration]                        
-       4 ->
-          if Enum.member?(aliveCells, point) do
-            nextGeneration = [point | nextGeneration]
-          else
-            nextGeneration
-          end
-        _ ->
-          nextGeneration
-    end
+    nextGeneration =
+      case aliveCount(point, aliveCells) do
+         3 -> [point]
+         4 -> if Enum.member?(aliveCells, point), do: [point], else: []
+         _ -> []
+      end
   end
 
   defp getCellWithNeigbours(point, y, cellWithNeigbours) do
